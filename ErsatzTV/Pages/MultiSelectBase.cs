@@ -8,6 +8,8 @@ using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
+using System.Linq;
+using static LanguageExt.Prelude;
 
 namespace ErsatzTV.Pages;
 
@@ -37,6 +39,12 @@ public class MultiSelectBase<T> : FragmentNavigationBase
 
     protected string SelectionLabel() =>
         $"{SelectedItems.Count} {(SelectedItems.Count == 1 ? "Item" : "Items")} Selected";
+
+    protected void SelectAllPageItems(IEnumerable<MediaCardViewModel> cards)
+    {
+        ResetSelectionWithCards(SelectedItems, cards);
+        StateHasChanged();
+    }
 
     protected void ClearSelection()
     {
@@ -238,5 +246,13 @@ public class MultiSelectBase<T> : FragmentNavigationBase
                     ClearSelection();
                 });
         }
+    }
+
+    internal static void ResetSelectionWithCards(
+        ISet<MediaCardViewModel> selectedItems,
+        IEnumerable<MediaCardViewModel> cards)
+    {
+        selectedItems.Clear();
+        selectedItems.UnionWith(cards);
     }
 }
